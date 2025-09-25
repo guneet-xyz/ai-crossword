@@ -1,7 +1,8 @@
 "use client"
 
-import { cn } from "@/lib/utils"
+import { Crossword } from "@/components/crossword"
 import { generateCrosswordLayout } from "@/lib/crossword"
+
 import { useState } from "react"
 
 export default function HomePage() {
@@ -64,10 +65,6 @@ export default function HomePage() {
     )
   }
 
-  return <Crossword theme={theme} onBack={() => setShowForm(true)} />
-}
-
-function Crossword({ theme, onBack }: { theme: string; onBack: () => void }) {
   const words = [
     "algorithm",
     "binary",
@@ -82,42 +79,5 @@ function Crossword({ theme, onBack }: { theme: string; onBack: () => void }) {
   ]
   const layout = generateCrosswordLayout(words)
 
-  return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            {theme.charAt(0).toUpperCase() + theme.slice(1)} Crossword
-          </h1>
-          <button
-            onClick={onBack}
-            className="text-blue-600 hover:text-blue-800 underline"
-          >
-            ← Back to theme selection
-          </button>
-        </div>
-
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <div className="flex justify-center">
-            <div className="font-mono flex flex-col gap-0.5 bg-gray-800 p-4 rounded-xl">
-              {layout.grid.map((row, rowIndex) => (
-                <div key={rowIndex} className="flex flex-row gap-0.5">
-                  {row.map((cell, cellIndex) => (
-                    <span
-                      className={cn("size-8 flex items-center justify-center", {
-                        "bg-white border rounded-xs uppercase": cell !== null,
-                      })}
-                      key={cellIndex}
-                    >
-                      {cell}
-                    </span>
-                  ))}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
+  return <Crossword layout={layout} />
 }

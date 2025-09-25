@@ -1,5 +1,5 @@
 {
-  "name": "__PACKAGE_NAME__",
+  "name": "ai-crossword",
   "version": "0.1.0",
   "private": true,
   "type": "module",

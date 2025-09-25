@@ -1,10 +1,22 @@
-export type Crossword = {
+export type CrosswordLayout = {
   grid: (string | null)[][]
+  words: {
+    across: Array<{
+      number: number
+      clue: string
+      answer: string
+    }>
+    down: Array<{
+      number: number
+      clue: string
+      answer: string
+    }>
+  }
 }
 
-export function generateCrosswordLayout(words: string[]): Crossword {
+export function generateCrosswordLayout(words: string[]): CrosswordLayout {
   if (words.length === 0) {
-    return { grid: [] }
+    return { grid: [], words: { across: [], down: [] } }
   }
 
   // Sort words by length in descending order to place longer words first
@@ -268,5 +280,5 @@ export function generateCrosswordLayout(words: string[]): Crossword {
     }
   }
 
-  return { grid: finalGrid }
+  return { grid: finalGrid, words: { across: [], down: [] } }
 }
