@@ -4,7 +4,6 @@ import OpenAI from "openai"
 
 export async function generateCrossword() {
   const endpoint = env.AI_BASE_URL
-  const model_name = "gpt-5-nano"
   const deployment = "gpt-5-nano"
   const prompt = `Generate 10 words for a crossword puzzle with the theme 'technology'. Provide the words in a JSON array format.`
   const client = new OpenAI({
@@ -36,5 +35,5 @@ export async function generateCrossword() {
     },
   })
 
-  return JSON.parse(resp.choices[0].message.content).words
+  return JSON.parse(resp.choices[0]!.message.content!).words // TODO: checks
 }

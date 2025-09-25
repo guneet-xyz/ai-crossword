@@ -1,5 +1,5 @@
 export type Crossword = {
-  grid: string[][]
+  grid: (string | null)[][]
 }
 
 export function generateCrosswordLayout(words: string[]): Crossword {
@@ -11,7 +11,7 @@ export function generateCrosswordLayout(words: string[]): Crossword {
   words.sort((a, b) => b.length - a.length)
 
   // Initialize a grid with a reasonable starting size, adjust dynamically
-  const initialSize = words[0].length * 2 // A heuristic
+  const initialSize = words[0]!.length * 2 // A heuristic
   let grid: (string | null)[][] = Array(initialSize)
     .fill(null)
     .map(() => Array(initialSize).fill(null))
@@ -24,12 +24,12 @@ export function generateCrosswordLayout(words: string[]): Crossword {
   }[] = []
 
   // Place the first word horizontally in the center
-  const firstWord = words[0]
+  const firstWord = words[0]!
   const startRow = Math.floor((initialSize - 1) / 2)
   const startCol = Math.floor((initialSize - firstWord.length) / 2)
 
   for (let i = 0; i < firstWord.length; i++) {
-    grid[startRow][startCol + i] = firstWord[i]
+    grid[startRow]![startCol + i]! = firstWord[i]!
   }
   placedWords.push({
     word: firstWord,
@@ -40,7 +40,7 @@ export function generateCrosswordLayout(words: string[]): Crossword {
 
   // Try to place the remaining words
   for (let i = 1; i < words.length; i++) {
-    const currentWord = words[i]
+    const currentWord = words[i]!
     let bestPlacement: {
       row: number
       col: number
@@ -81,13 +81,13 @@ export function generateCrosswordLayout(words: string[]): Crossword {
                 tempRow < 0 ||
                 tempCol < 0 ||
                 tempRow + currentWord.length > newGrid.length ||
-                tempCol >= newGrid[0].length
+                tempCol >= newGrid[0]!.length
               ) {
                 continue // Out of bounds
               }
 
               for (let k = 0; k < currentWord.length; k++) {
-                const targetChar = newGrid[tempRow + k][tempCol]
+                const targetChar = newGrid[tempRow + k]![tempCol]
                 if (targetChar !== null && targetChar !== currentWord[k]) {
                   canPlace = false
                   break
@@ -101,15 +101,15 @@ export function generateCrosswordLayout(words: string[]): Crossword {
                 // Ensure no adjacent letters for the new word, except at intersections
                 if (
                   tempRow > 0 &&
-                  newGrid[tempRow - 1][tempCol] !== null &&
-                  newGrid[tempRow - 1][tempCol] !== currentWord[0]
+                  newGrid[tempRow - 1]![tempCol] !== null &&
+                  newGrid[tempRow - 1]![tempCol] !== currentWord[0]
                 ) {
                   canPlace = false
                 }
                 if (
                   tempRow + currentWord.length < newGrid.length &&
-                  newGrid[tempRow + currentWord.length][tempCol] !== null &&
-                  newGrid[tempRow + currentWord.length][tempCol] !==
+                  newGrid[tempRow + currentWord.length]![tempCol] !== null &&
+                  newGrid[tempRow + currentWord.length]![tempCol] !==
                     currentWord[currentWord.length - 1]
                 ) {
                   canPlace = false
@@ -118,14 +118,14 @@ export function generateCrosswordLayout(words: string[]): Crossword {
                   if (k !== charIndexCurrent) {
                     if (
                       tempCol > 0 &&
-                      newGrid[tempRow + k][tempCol - 1] !== null
+                      newGrid[tempRow + k]![tempCol - 1] !== null
                     ) {
                       canPlace = false
                       break
                     }
                     if (
-                      tempCol + 1 < newGrid[0].length &&
-                      newGrid[tempRow + k][tempCol + 1] !== null
+                      tempCol + 1 < newGrid[0]!.length &&
+                      newGrid[tempRow + k]![tempCol + 1] !== null
                     ) {
                       canPlace = false
                       break
@@ -136,7 +136,7 @@ export function generateCrosswordLayout(words: string[]): Crossword {
 
               if (canPlace) {
                 for (let k = 0; k < currentWord.length; k++) {
-                  newGrid[tempRow + k][tempCol] = currentWord[k]
+                  newGrid[tempRow + k]![tempCol] = currentWord[k]!
                 }
               }
             } else {
@@ -150,13 +150,13 @@ export function generateCrosswordLayout(words: string[]): Crossword {
                 tempRow < 0 ||
                 tempCol < 0 ||
                 tempRow >= newGrid.length ||
-                tempCol + currentWord.length > newGrid[0].length
+                tempCol + currentWord.length > newGrid[0]!.length
               ) {
                 continue // Out of bounds
               }
 
               for (let k = 0; k < currentWord.length; k++) {
-                const targetChar = newGrid[tempRow][tempCol + k]
+                const targetChar = newGrid[tempRow]![tempCol + k]
                 if (targetChar !== null && targetChar !== currentWord[k]) {
                   canPlace = false
                   break
@@ -170,15 +170,15 @@ export function generateCrosswordLayout(words: string[]): Crossword {
                 // Ensure no adjacent letters for the new word, except at intersections
                 if (
                   tempCol > 0 &&
-                  newGrid[tempRow][tempCol - 1] !== null &&
-                  newGrid[tempRow][tempCol - 1] !== currentWord[0]
+                  newGrid[tempRow]![tempCol - 1] !== null &&
+                  newGrid[tempRow]![tempCol - 1] !== currentWord[0]
                 ) {
                   canPlace = false
                 }
                 if (
-                  tempCol + currentWord.length < newGrid[0].length &&
-                  newGrid[tempRow][tempCol + currentWord.length] !== null &&
-                  newGrid[tempRow][tempCol + currentWord.length] !==
+                  tempCol + currentWord.length < newGrid[0]!.length &&
+                  newGrid[tempRow]![tempCol + currentWord.length] !== null &&
+                  newGrid[tempRow]![tempCol + currentWord.length] !==
                     currentWord[currentWord.length - 1]
                 ) {
                   canPlace = false
@@ -187,14 +187,14 @@ export function generateCrosswordLayout(words: string[]): Crossword {
                   if (k !== charIndexCurrent) {
                     if (
                       tempRow > 0 &&
-                      newGrid[tempRow - 1][tempCol + k] !== null
+                      newGrid[tempRow - 1]![tempCol + k] !== null
                     ) {
                       canPlace = false
                       break
                     }
                     if (
                       tempRow + 1 < newGrid.length &&
-                      newGrid[tempRow + 1][tempCol + k] !== null
+                      newGrid[tempRow + 1]![tempCol + k] !== null
                     ) {
                       canPlace = false
                       break
@@ -205,7 +205,7 @@ export function generateCrosswordLayout(words: string[]): Crossword {
 
               if (canPlace) {
                 for (let k = 0; k < currentWord.length; k++) {
-                  newGrid[tempRow][tempCol + k] = currentWord[k]
+                  newGrid[tempRow]![tempCol + k] = currentWord[k]!
                 }
               }
             }
@@ -247,8 +247,8 @@ export function generateCrosswordLayout(words: string[]): Crossword {
   let maxCol = -1
 
   for (let r = 0; r < grid.length; r++) {
-    for (let c = 0; c < grid[r].length; c++) {
-      if (grid[r][c] !== null) {
+    for (let c = 0; c < grid[r]!.length; c++) {
+      if (grid[r]![c] !== null) {
         minRow = Math.min(minRow, r)
         maxRow = Math.max(maxRow, r)
         minCol = Math.min(minCol, c)
@@ -262,7 +262,7 @@ export function generateCrosswordLayout(words: string[]): Crossword {
     for (let r = minRow; r <= maxRow; r++) {
       const row: string[] = []
       for (let c = minCol; c <= maxCol; c++) {
-        row.push(grid[r][c] || "") // Replace null with empty string for output
+        row.push(grid[r]![c] || "") // Replace null with empty string for output
       }
       finalGrid.push(row)
     }
