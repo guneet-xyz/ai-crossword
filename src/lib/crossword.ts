@@ -257,12 +257,12 @@ export function generateCrosswordLayout(words: string[]): Crossword {
     }
   }
 
-  const finalGrid: string[][] = []
+  const finalGrid: (string | null)[][] = []
   if (minRow <= maxRow && minCol <= maxCol) {
     for (let r = minRow; r <= maxRow; r++) {
-      const row: string[] = []
+      const row: (string | null)[] = []
       for (let c = minCol; c <= maxCol; c++) {
-        row.push(grid[r]![c] || "") // Replace null with empty string for output
+        row.push(grid[r]![c]!)
       }
       finalGrid.push(row)
     }

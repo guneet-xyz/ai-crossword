@@ -1,9 +1,11 @@
-// import { generateCrossword } from "@/lib/ai"
 import { generateCrosswordLayout } from "@/lib/crossword"
 import { cn } from "@/lib/utils"
 
 export default async function HomePage() {
-  // const resp = await generateCrossword()
+  return <Crossword />
+}
+
+function Crossword() {
   const words = [
     "algorithm",
     "binary",
@@ -19,21 +21,18 @@ export default async function HomePage() {
   const layout = generateCrosswordLayout(words)
 
   return (
-    <div>
-      <h1>Crossword Puzzle</h1>
-      {JSON.stringify(layout, null, 2)}
-      <div style={{ fontFamily: "monospace", lineHeight: "1.2" }}>
+    <div className="flex grow items-center justify-center">
+      <div className="font-mono flex flex-col gap-0.5 bg-gray-800 p-4 rounded-xl">
         {layout.grid.map((row, rowIndex) => (
-          <div key={rowIndex}>
+          <div key={rowIndex} className="flex flex-row gap-0.5">
             {row.map((cell, cellIndex) => (
               <span
-                className={cn("size-8 inline-block", {
-                  "bg-black": cell === "",
-                  "border border-gray-300": cell !== "",
+                className={cn("size-8 flex items-center justify-center", {
+                  "bg-white border rounded-xs uppercase`": cell !== null,
                 })}
                 key={cellIndex}
               >
-                {cell === "" ? "." : cell}
+                {cell}
               </span>
             ))}
           </div>
