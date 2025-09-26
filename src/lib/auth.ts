@@ -218,12 +218,12 @@ declare module "next-auth" {
 }
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
-  pages: {
-    signIn: "/login",
-    signOut: "/logout",
-    error: "/error/auth",
-    verifyRequest: "/verify-request",
-  },
+  // pages: {
+  //   signIn: "/login",
+  //   signOut: "/logout",
+  //   error: "/error/auth",
+  //   verifyRequest: "/verify-request",
+  // },
   callbacks: {
     session: async (ctx) => {
       const { session } = ctx
@@ -247,6 +247,20 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       return session
     },
   },
+  events: {
+    async createUser(event) {
+      // TODO: send welcome email
+      const { user } = event
+      if (!user.id) return
+      await fixUser(user.id)
+    },
+    async updateUser() {
+      // TODO: send alert email
+    },
+    async linkAccount() {
+      // TODO: send alert email
+    },
+  },
   adapter: DrizzleAdapter(db, {
     usersTable: users,
     accountsTable: accounts,
@@ -261,3 +275,8 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     }),
   ],
 })
+
+export async function authUser() {
+  const session = await auth()
+  return session?.user ?? null
+}
