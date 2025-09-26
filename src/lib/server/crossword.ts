@@ -1,4 +1,4 @@
-import { generateClueForWords, generateWordsFromTheme } from "@/lib/ai"
+import { generateClueForWords, generateWordsFromTheme } from "@/lib/server/ai"
 
 export type CrosswordLayout = {
   grid: (string | null)[][]

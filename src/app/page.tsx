@@ -1,4 +1,4 @@
-import { authUser } from "@/lib/auth"
+import { authUser } from "@/lib/server/auth"
 
 import { Client } from "./client"
 
