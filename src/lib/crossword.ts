@@ -1,3 +1,5 @@
+import { generateClueForWords, generateWordsFromTheme } from "@/lib/ai"
+
 export type CrosswordLayout = {
   grid: (string | null)[][]
   words: {
@@ -14,10 +16,40 @@ export type CrosswordLayout = {
   }
 }
 
-export function generateCrosswordLayout(words: string[]): CrosswordLayout {
-  if (words.length === 0) {
-    return { grid: [], words: { across: [], down: [] } }
+export async function generateCrossword(theme: string) {
+  const words = await generateWordsFromTheme({ theme, n_words: 10 })
+  const clues = await generateClueForWords({ words, theme })
+
+  const { grid, word_orientations } = generateCrosswordLayout(words)
+
+  const layout: CrosswordLayout = {
+    grid,
+    words: {
+      across: [],
+      down: [],
+    },
   }
+
+  for (const { word, clue } of clues) {
+    const orientation = word_orientations[word]
+    if (!orientation) continue // word couldn't be placed
+
+    const placedWord = layout.words[orientation].length + 1
+    layout.words[orientation].push({
+      number: placedWord,
+      clue,
+      answer: word,
+    })
+  }
+
+  return layout
+}
+
+export function generateCrosswordLayout(words: string[]): {
+  grid: CrosswordLayout["grid"]
+  word_orientations: Record<string, "across" | "down">
+} {
+  if (words.length === 0) return { grid: [], word_orientations: {} }
 
   // Sort words by length in descending order to place longer words first
   words.sort((a, b) => b.length - a.length)
@@ -280,5 +312,11 @@ export function generateCrosswordLayout(words: string[]): CrosswordLayout {
     }
   }
 
-  return { grid: finalGrid, words: { across: [], down: [] } }
+  const word_orientations: Record<string, "across" | "down"> = {}
+  for (const placed of placedWords) {
+    word_orientations[placed.word] =
+      placed.direction === "H" ? "across" : "down"
+  }
+
+  return { grid: finalGrid, word_orientations }
 }

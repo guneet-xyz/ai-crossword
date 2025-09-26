@@ -37,47 +37,47 @@ export function Crossword({ layout }: { layout: CrosswordLayout }) {
   }>({ row: r, col: c })
 
   return (
-    <div
-      className="flex grow items-center justify-center"
-      autoFocus
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === "ArrowUp") {
-          e.preventDefault()
-          for (let i = activeCell.row - 1; i >= 0; i--) {
-            if (isValidCell(i, activeCell.col)) {
-              setActiveCell({ row: i, col: activeCell.col })
-              break
+    <div className="flex grow items-center justify-center">
+      <div
+        className="font-mono flex flex-col gap-0.5 bg-neutral-800 p-4 rounded-xl"
+        autoFocus
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === "ArrowUp") {
+            e.preventDefault()
+            for (let i = activeCell.row - 1; i >= 0; i--) {
+              if (isValidCell(i, activeCell.col)) {
+                setActiveCell({ row: i, col: activeCell.col })
+                break
+              }
+            }
+          } else if (e.key === "ArrowDown") {
+            e.preventDefault()
+            for (let i = activeCell.row + 1; i < rows; i++) {
+              if (isValidCell(i, activeCell.col)) {
+                setActiveCell({ row: i, col: activeCell.col })
+                break
+              }
+            }
+          } else if (e.key === "ArrowLeft") {
+            e.preventDefault()
+            for (let j = activeCell.col - 1; j >= 0; j--) {
+              if (isValidCell(activeCell.row, j)) {
+                setActiveCell({ row: activeCell.row, col: j })
+                break
+              }
+            }
+          } else if (e.key === "ArrowRight") {
+            e.preventDefault()
+            for (let j = activeCell.col + 1; j < cols; j++) {
+              if (isValidCell(activeCell.row, j)) {
+                setActiveCell({ row: activeCell.row, col: j })
+                break
+              }
             }
           }
-        } else if (e.key === "ArrowDown") {
-          e.preventDefault()
-          for (let i = activeCell.row + 1; i < rows; i++) {
-            if (isValidCell(i, activeCell.col)) {
-              setActiveCell({ row: i, col: activeCell.col })
-              break
-            }
-          }
-        } else if (e.key === "ArrowLeft") {
-          e.preventDefault()
-          for (let j = activeCell.col - 1; j >= 0; j--) {
-            if (isValidCell(activeCell.row, j)) {
-              setActiveCell({ row: activeCell.row, col: j })
-              break
-            }
-          }
-        } else if (e.key === "ArrowRight") {
-          e.preventDefault()
-          for (let j = activeCell.col + 1; j < cols; j++) {
-            if (isValidCell(activeCell.row, j)) {
-              setActiveCell({ row: activeCell.row, col: j })
-              break
-            }
-          }
-        }
-      }}
-    >
-      <div className="font-mono flex flex-col gap-0.5 bg-neutral-800 p-4 rounded-xl">
+        }}
+      >
         {layout.grid.map((row, rowIndex) => (
           <div key={rowIndex} className="flex flex-row gap-0.5">
             {row.map((cell, cellIndex) => (
@@ -104,6 +104,13 @@ export function Crossword({ layout }: { layout: CrosswordLayout }) {
             ))}
           </div>
         ))}
+      </div>
+      <div>
+        <div>
+          {layout.words.across.map((word) => (
+            <div key={word.number}>{word.answer}</div>
+          ))}
+        </div>
       </div>
     </div>
   )
