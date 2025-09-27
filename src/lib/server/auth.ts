@@ -280,3 +280,5 @@ export async function authUser() {
   const session = await auth()
   return session?.user ?? null
 }
+
+export type User = NonNullable<Awaited<ReturnType<typeof authUser>>>

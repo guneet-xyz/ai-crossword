@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 
 import { signIn } from "next-auth/react"
 
-export async function Client() {
+export function Client() {
   return (
     <div className="grow flex items-center justify-center">
       <Card>

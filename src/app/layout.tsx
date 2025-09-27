@@ -1,7 +1,8 @@
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
 import "@/styles/globals.css"
 
-import { Navbar } from "./_components/navbar"
+import { AppSidebar } from "./_components/sidebar"
 
 import { type Metadata } from "next"
 import { ThemeProvider } from "next-themes"
@@ -9,7 +10,7 @@ import { Geist } from "next/font/google"
 import localFont from "next/font/local"
 
 export const metadata: Metadata = {
-  title: "easystart",
+  title: "easy crossword",
   description: "Opinionated starter template for NextJS",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 }
@@ -35,8 +36,11 @@ export default function RootLayout({
     >
       <body className="flex min-h-screen flex-col">
         <ThemeProvider attribute="class">
-          <Navbar />
-          {children}
+          <SidebarProvider>
+            <AppSidebar />
+            <SidebarTrigger className="size-10" />
+            {children}
+          </SidebarProvider>
         </ThemeProvider>
       </body>
     </html>

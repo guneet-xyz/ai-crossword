@@ -14,7 +14,7 @@ export function FancyHoverIcon({
       <div
         className={cn(
           "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
-          "transition-opacity opacity-100 group-hover:opacity-0",
+          "transition-opacity opacity-100 group-hover/fancy-hover-icon:opacity-0",
         )}
       >
         {nohover}
@@ -22,7 +22,7 @@ export function FancyHoverIcon({
       <div
         className={cn(
           "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
-          "transition-opacity opacity-0 group-hover:opacity-100",
+          "transition-opacity opacity-0 group-hover/fancy-hover-icon:opacity-100",
         )}
       >
         {hover}
