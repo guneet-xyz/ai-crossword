@@ -1,13 +1,16 @@
 import { relations, sql } from "drizzle-orm"
 import {
   type AnyPgColumn,
+  char,
   index,
   integer,
+  pgEnum,
   pgTableCreator,
   primaryKey,
   text,
   timestamp,
   uniqueIndex,
+  uuid,
   varchar,
 } from "drizzle-orm/pg-core"
 
@@ -20,10 +23,7 @@ export const createTable = pgTableCreator((name) => `${name}`)
 export const users = createTable(
   "user",
   {
-    id: varchar("id", { length: 255 })
-      .notNull()
-      .primaryKey()
-      .$defaultFn(() => crypto.randomUUID()),
+    id: uuid("id").notNull().primaryKey().defaultRandom(),
     name: varchar("name", { length: 255 }),
     username: varchar("username", { length: 255 }),
     email: varchar("email", { length: 255 }).notNull(),
@@ -51,7 +51,7 @@ export const usersRelations = relations(users, ({ many }) => ({
 export const accounts = createTable(
   "account",
   {
-    userId: varchar("user_id", { length: 255 })
+    userId: uuid("id")
       .notNull()
       .references(() => users.id),
     type: varchar("type", { length: 255 }).notNull(),
@@ -85,7 +85,7 @@ export const sessions = createTable(
     sessionToken: varchar("session_token", { length: 255 })
       .notNull()
       .primaryKey(),
-    userId: varchar("user_id", { length: 255 })
+    userId: uuid("user_id")
       .notNull()
       .references(() => users.id),
     expires: timestamp("expires", {
@@ -111,4 +111,102 @@ export const verificationTokens = createTable(
     }).notNull(),
   },
   (vt) => [primaryKey({ columns: [vt.identifier, vt.token] })],
+)
+
+// export const asyncJobs = createTable("async_jobs", {
+//   id: uuid("id").notNull().primaryKey().defaultRandom(),
+//   prompt: text("prompt").notNull(),
+//   result: text("result"),
+//   createdAt: timestamp("created_at", {
+//     mode: "date",
+//     withTimezone: true,
+//   }).defaultNow(),
+//   finishedAt: timestamp("finished_at", {
+//     mode: "date",
+//     withTimezone: true,
+//   }),
+// })
+
+// export const asyncJobCrosswordRelations = createTable(
+//   "async_job_crossword_relation",
+//   {
+//     jobId: uuid("job_id")
+//       .references(() => asyncJobs.id)
+//       .notNull(),
+//     crosswordId: uuid("crossword_id")
+//       .references(() => crosswords.id)
+//       .notNull(),
+//   },
+//   (t) => [
+//     uniqueIndex("unique_job_id").on(t.jobId),
+//     uniqueIndex("unique_crossword_id").on(t.crosswordId),
+//   ],
+// )
+
+export const crosswords = createTable("crossword", {
+  id: uuid("id").notNull().primaryKey().defaultRandom(),
+  theme: varchar("title", { length: 255 }).notNull(),
+  generatedByUserId: uuid("generate_by_user_id")
+    .notNull()
+    .references(() => users.id),
+  createdAt: timestamp("created_at", {
+    mode: "date",
+    withTimezone: true,
+  }).defaultNow(),
+  deletedAt: timestamp("deleted_at", { mode: "date", withTimezone: true }),
+})
+
+export const crosswordWordOrientation = pgEnum("crossword_word_orientation", [
+  "across",
+  "down",
+])
+
+export const crosswordWords = createTable(
+  "crossword_word",
+  {
+    crosswordId: uuid("crossword_id")
+      .notNull()
+      .references(() => crosswords.id),
+    orientation: crosswordWordOrientation("orientation"),
+    row: integer("row").notNull(),
+    col: integer("col").notNull(),
+    word: varchar("word", { length: 255 }).notNull(),
+    clue: text("clue").notNull(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.crosswordId, t.word] }),
+    index("crossword_word_crossword_id_idx").on(t.crosswordId),
+  ],
+)
+
+export const crosswordSession = createTable("crossword_session", {
+  id: uuid("id").notNull().primaryKey().defaultRandom(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id),
+  crosswordId: uuid("crossword_id")
+    .notNull()
+    .references(() => crosswords.id),
+  createdAt: timestamp("created_at", {
+    mode: "date",
+    withTimezone: true,
+  })
+    .notNull()
+    .defaultNow(),
+})
+
+export const crosswordSessionGrid = createTable(
+  "crossword_session_grid",
+  {
+    sessionId: uuid("session_id")
+      .notNull()
+      .references(() => crosswordSession.id),
+    row: integer("row").notNull(),
+    col: integer("col").notNull(),
+    letter: char("letter", { length: 1 }),
+  },
+  (t) => [
+    primaryKey({ columns: [t.sessionId, t.row, t.col] }),
+    index("crossword_session_grid_session_id_idx").on(t.sessionId),
+  ],
 )

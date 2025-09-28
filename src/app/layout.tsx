@@ -8,6 +8,7 @@ import { type Metadata } from "next"
 import { ThemeProvider } from "next-themes"
 import { Geist } from "next/font/google"
 import localFont from "next/font/local"
+import { Toaster } from "sonner"
 
 export const metadata: Metadata = {
   title: "easy crossword",
@@ -41,6 +42,7 @@ export default function RootLayout({
             <SidebarTrigger className="size-10" />
             {children}
           </SidebarProvider>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

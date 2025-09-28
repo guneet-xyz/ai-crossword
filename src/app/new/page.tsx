@@ -11,9 +11,12 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import { createCrossword } from "@/lib/server/actions/create-crossword"
 
+import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { PiDiceFive, PiDiceFiveDuotone } from "react-icons/pi"
+import { toast } from "sonner"
 
 const randomThemes = [
   "Space Exploration",
@@ -30,6 +33,21 @@ const randomThemes = [
 
 export default function Page() {
   const [crosswordTheme, setCrosswordTheme] = useState("")
+  const [submitting, setSubmitting] = useState(false)
+  const router = useRouter()
+
+  async function onSubmit() {
+    if (submitting) return
+    setSubmitting(true)
+    const resp = await createCrossword({ theme: crosswordTheme })
+    if (resp.status === "error") {
+      toast.error(resp.title, { description: resp.description })
+    } else {
+      toast.success("Generating crossword")
+      router.push(`/crossword/${resp.crosswordId}`)
+    }
+    setSubmitting(false)
+  }
 
   return (
     <div className="grow flex items-center justify-center">
@@ -69,7 +87,9 @@ export default function Page() {
           </div>
         </CardContent>
         <CardFooter>
-          <Button className="w-full">Create Crossword</Button>
+          <Button className="w-full" disabled={submitting} onClick={onSubmit}>
+            Create Crossword
+          </Button>
         </CardFooter>
       </Card>
     </div>
