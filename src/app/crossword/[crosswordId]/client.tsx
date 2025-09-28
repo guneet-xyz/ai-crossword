@@ -132,6 +132,7 @@ export function Client({
                           : cell,
                       ),
                     )
+
                     for (
                       let c = activeCell.col + 1;
                       c < crossword.size.cols;
@@ -144,7 +145,7 @@ export function Client({
                         )?.letter !== undefined
                       ) {
                         setActiveCell({ row: activeCell.row, col: c })
-                        break
+                        return
                       }
                     }
 
@@ -160,7 +161,7 @@ export function Client({
                         )?.letter !== undefined
                       ) {
                         setActiveCell({ row: r, col: activeCell.col })
-                        break
+                        return
                       }
                     }
                   }
@@ -175,7 +176,7 @@ export function Client({
                 "size-12 bg-neutral-50/50 dark:bg-neutral-950/50 rounded-md relative flex items-center justify-center",
                 {
                   "border bg-white dark:bg-black": cell.letter !== undefined,
-                  "border-neutral-300 dark:border-neutral-700":
+                  "border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-900":
                     activeCell &&
                     cell.col === activeCell.col &&
                     cell.row === activeCell.row,
@@ -212,10 +213,42 @@ export function Client({
             .filter((w) => w.orientation === "across")
             .map((w) => (
               <div key={w.number} className="px-4 py-2 flex gap-2 items-center">
-                <div className="font-semibold text-xs bg-neutral-200 rounded-md min-h-6 min-w-6 flex items-center justify-center dark:bg-neutral-800">
+                <div
+                  className={cn(
+                    "font-semibold text-xs bg-neutral-200 rounded-md min-h-6 min-w-6 flex items-center justify-center dark:bg-neutral-800",
+                    {
+                      "bg-emerald-200/50 dark:bg-emerald-800/50 text-emerald-900 dark:text-emerald-300":
+                        Array.from({ length: w.word.length }).every((_, i) => {
+                          const cell = grid.find(
+                            (c) => c.row === w.row && c.col === w.col + i,
+                          )
+                          return (
+                            cell?.letter?.toUpperCase() ===
+                            w.word[i]?.toUpperCase()
+                          )
+                        }),
+                    },
+                  )}
+                >
                   {w.number}
                 </div>
-                <div>{w.clue}</div>
+                <div
+                  className={cn({
+                    "line-through": Array.from({ length: w.word.length }).every(
+                      (_, i) => {
+                        const cell = grid.find(
+                          (c) => c.row === w.row && c.col === w.col + i,
+                        )
+                        return (
+                          cell?.letter?.toUpperCase() ===
+                          w.word[i]?.toUpperCase()
+                        )
+                      },
+                    ),
+                  })}
+                >
+                  {w.clue}
+                </div>
               </div>
             ))}
           <div className="font-bold text-center py-2 px-4 bg-neutral-100 dark:bg-neutral-900">
